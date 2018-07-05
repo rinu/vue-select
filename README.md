@@ -7,5 +7,5 @@ You probably want the original: https://github.com/sagalbot/vue-select
 
 #### NPM
 ```bash
-$ npm install git+https://github.com/rinu/vue-select.git
+$ npm install rinu-vue-select
 ```
