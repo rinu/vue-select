@@ -141,7 +141,8 @@
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 4px;
-    height: 26px;
+    height: auto;
+    min-height: 26px;
     margin: 4px 1px 0px 3px;
     padding: 1px 0.25em;
     float: left;
@@ -208,30 +209,26 @@
     box-shadow: none;
   }
   .v-select.unsearchable input[type="search"] {
-    opacity: 0;
-  }
-  .v-select.unsearchable input[type="search"]:hover {
-    cursor: pointer;
+    display: none;
   }
     /* List Items */
   .v-select li {
     line-height: 1.42857143; /* Normalize line height */
   }
-  .v-select li > a {
+  .v-select li:hover {
+    cursor: pointer;
+  }
+  .v-select .dropdown-menu > li > a {
     display: block;
     padding: 3px 20px;
     clear: both;
     color: #333; /* Overrides most CSS frameworks */
     white-space: nowrap;
   }
-  .v-select li:hover {
-    cursor: pointer;
-  }
-  .v-select .dropdown-menu .active > a {
-    color: #333;
+  .v-select .dropdown-menu > li.active > a {
     background: rgba(50, 50, 50, .1);
   }
-  .v-select .dropdown-menu > .highlight > a {
+  .v-select .dropdown-menu > li.highlight > a {
     /*
      * required to override bootstrap 3's
      * .dropdown-menu > li > a:hover {} styles
@@ -346,13 +343,13 @@
               aria-label="Search for option"
       >
 
-      <button 
-        v-show="showClearButton" 
-        :disabled="disabled" 
+      <button
+        v-show="showClearButton"
+        :disabled="disabled"
         @click="clearSelection"
-        type="button" 
-        class="clear" 
-        title="Clear selection" 
+        type="button"
+        class="clear"
+        title="Clear selection"
       >
         <span aria-hidden="true">&times;</span>
       </button>
@@ -366,7 +363,7 @@
 
     <transition :name="transition">
       <ul ref="dropdownMenu" v-if="dropdownOpen" class="dropdown-menu" :style="{ 'max-height': maxHeight }">
-        <li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
+        <li v-for="(option, index) in filteredOptions" v-bind:key="index" :class="{ active: isOptionSelected(option, mutableValue), highlight: index === typeAheadPointer }" @mouseover="typeAheadPointer = index">
           <a @mousedown.prevent="select(option)">
           <slot name="option" v-bind="(typeof option === 'object')?option:{[label]: option}">
             {{ getOptionLabel(option) }}
@@ -680,6 +677,32 @@
         type: String,
         default: 'auto'
       },
+
+      /**
+       * Check if the given option is currently selected.
+       * @param  {Object|String}  option
+       * @return {Boolean}        True when selected | False otherwise
+       */
+      isOptionSelected: {
+        type: Function,
+        default(option, options) {
+          if (this.multiple && options) {
+            let selected = false
+            options.forEach(opt => {
+              if (typeof opt === 'object' && opt[this.label] === option[this.label]) {
+                selected = true
+              } else if (typeof opt === 'object' && opt[this.label] === option) {
+                selected = true
+              } else if (opt === option) {
+                selected = true
+              }
+            })
+            return selected
+          }
+
+          return this.mutableValue === option
+        }
+      },
     },
 
     data() {
@@ -768,7 +791,7 @@
        * @return {void}
        */
       select(option) {
-        if (!this.isOptionSelected(option)) {
+        if (!this.isOptionSelected(option, this.mutableValue)) {
           if (this.taggable && !this.optionExists(option)) {
             option = this.createOption(option)
           }
@@ -845,30 +868,6 @@
             }
           }
         }
-      },
-
-      /**
-       * Check if the given option is currently selected.
-       * @param  {Object|String}  option
-       * @return {Boolean}        True when selected | False otherwise
-       */
-      isOptionSelected(option) {
-        if (this.multiple && this.mutableValue) {
-          let selected = false
-          this.mutableValue.forEach(opt => {
-            if (typeof opt === 'object' && opt[this.label] === option[this.label]) {
-              selected = true
-            } else if (typeof opt === 'object' && opt[this.label] === option) {
-              selected = true
-            }
-            else if (opt === option) {
-              selected = true
-            }
-          })
-          return selected
-        }
-
-        return this.mutableValue === option
       },
 
       /**
