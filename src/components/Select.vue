@@ -209,12 +209,9 @@
     position: relative;
     box-shadow: none;
   }
-  .v-select.unsearchable input[type="search"] {
-    display: none;
-  }
+
   .v-select input[type="search"].hidden {
-    width: 0px;
-    padding: 0;
+    display: none;
   }
   .v-select input[type="search"].shrunk {
     width: auto;
@@ -331,28 +328,28 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </span>
-    </slot>
+      </slot>
 
       <input
-              ref="search"
-              v-model="search"
-              @keydown.delete="maybeDeleteValue"
-              @keyup.esc="onEscape"
-              @keydown.up.prevent="typeAheadUp"
-              @keydown.down.prevent="typeAheadDown"
-              @keydown.enter.prevent="typeAheadSelect"
-              @blur="onSearchBlur"
-              @focus="onSearchFocus"
-              type="search"
-              class="form-control"
-              :class="inputClasses"
-              autocomplete="off"
-              :disabled="disabled"
-              :placeholder="searchPlaceholder"
-              :tabindex="tabindex"
-              :readonly="!searchable"
-              :id="inputId"
-              aria-label="Search for option"
+        ref="search"
+        v-model="search"
+        @keydown.delete="maybeDeleteValue"
+        @keyup.esc="onEscape"
+        @keydown.up.prevent="typeAheadUp"
+        @keydown.down.prevent="typeAheadDown"
+        @keydown.enter.prevent="typeAheadSelect"
+        @blur="onSearchBlur"
+        @focus="onSearchFocus"
+        type="search"
+        class="form-control"
+        :class="inputClasses"
+        autocomplete="off"
+        :disabled="disabled"
+        :placeholder="searchPlaceholder"
+        :tabindex="tabindex"
+        :readonly="!searchable"
+        :id="inputId"
+        aria-label="Search for option"
       >
 
       <button
