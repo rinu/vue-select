@@ -149,13 +149,16 @@
     float: left;
     line-height: 24px;
   }
-  .v-select.single .selected-tag {
+  .v-select.single .selected-tag, .selected-tag.empty {
     background-color: transparent;
     border-color: transparent;
   }
-  .v-select.single.open .selected-tag {
+  .v-select.single.open .selected-tag, .selected-tag.empty {
     position: absolute;
     opacity: .5;
+  }
+  .selected-tag.empty {
+    font-style: italic;
   }
   .v-select.single.open.searching .selected-tag,
   .v-select.single.loading .selected-tag {
@@ -196,7 +199,7 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     line-height: 1.42857143;
-    font-size:1em;
+    font-size: 1em;
     height: 34px;
     display: inline-block;
     border: none;
@@ -211,7 +214,10 @@
   }
 
   .v-select input[type="search"].hidden {
-    display: none;
+    border: none;
+    padding: 0;
+    width: 0;
+    float: left;
   }
   .v-select input[type="search"].shrunk {
     width: auto;
@@ -317,10 +323,12 @@
 <template>
   <div :dir="dir" class="dropdown v-select" :class="dropdownClasses">
     <div ref="toggle" @mousedown.prevent="toggleDropdown" :class="['dropdown-toggle', 'clearfix']">
-
+      <span class="selected-tag empty" v-if="isValueEmpty">
+        {{ notSelectedText }}
+      </span>
       <slot v-for="option in valueAsArray" name="selected-option-container"
             :option="(typeof option === 'object')?option:{[label]: option}" :deselect="deselect" :multiple="multiple" :disabled="disabled">
-        <span class="selected-tag" v-bind:key="option.index">
+        <span ref="selectedTag" class="selected-tag" v-bind:key="option.index">
           <slot name="selected-option" v-bind="(typeof option === 'object')?option:{[label]: option}">
             {{ getOptionLabel(option) }}
           </slot>
@@ -712,6 +720,16 @@
           return this.mutableValue === option
         }
       },
+
+      /**
+       * Text to show if nothing is selected (null value)
+       * @type {String}
+       * @default 'Not selected'
+       */
+      notSelectedText: {
+        type: String,
+        default: 'Not selected'
+      }
     },
 
     data() {
@@ -867,7 +885,7 @@
        * @return {void}
        */
       toggleDropdown(e) {
-        if (e.target === this.$refs.openIndicator || e.target === this.$refs.search || e.target === this.$refs.toggle || e.target === this.$el) {
+        if ((e.target === this.$refs.selectedTag[0] && !this.multiple) || e.target === this.$refs.openIndicator || e.target === this.$refs.search || e.target === this.$refs.toggle || e.target === this.$el) {
           if (this.open) {
             this.$refs.search.blur() // dropdown will close on blur
           } else {
