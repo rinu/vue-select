@@ -323,7 +323,7 @@
 <template>
   <div :dir="dir" class="dropdown v-select" :class="dropdownClasses">
     <div ref="toggle" @mousedown.prevent="toggleDropdown" :class="['dropdown-toggle', 'clearfix']">
-      <span class="selected-tag empty" v-if="isValueEmpty">
+      <span class="selected-tag empty" v-if="isValueEmpty && !search">
         {{ notSelectedText }}
       </span>
       <slot v-for="option in valueAsArray" name="selected-option-container"
