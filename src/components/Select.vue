@@ -388,7 +388,7 @@
           </a>
         </li>
         <li v-if="!filteredOptions.length" class="no-options">
-          <slot name="no-options">Sorry, no matching options.</slot>
+          <slot name="no-options">{{ noOptionsText }}</slot>
         </li>
       </ul>
     </transition>
@@ -729,6 +729,16 @@
       notSelectedText: {
         type: String,
         default: 'Not selected'
+      },
+
+      /**
+       * Text to show if there are no options to show
+       * @type {String}
+       * @default 'Sorry, no matching options.'
+       */
+      noOptionsText: {
+        type: String,
+        default: 'Sorry, no matching options.'
       }
     },
 
