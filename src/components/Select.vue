@@ -340,7 +340,7 @@
 
       <input
         ref="search"
-        v-model="search"
+        :value="search"
         @keydown.delete="maybeDeleteValue"
         @keyup.esc="onEscape"
         @keydown.up.prevent="typeAheadUp"
@@ -348,6 +348,7 @@
         @keydown.enter.prevent="typeAheadSelect"
         @blur="onSearchBlur"
         @focus="onSearchFocus"
+        @input="search = $event.target.value"
         type="search"
         class="form-control"
         :class="inputClasses"
